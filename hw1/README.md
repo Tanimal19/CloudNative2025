@@ -1,33 +1,61 @@
-
+# How to use
 ## Environment
-`python` >= 3.13
+Python >= 3.13
 
 ## Run
-First, make sure you're working directory is at `hw1/`.  
-For `windows` user: `python src/main.py`
+Run the following command in the project's root directory:  
+(windows) `python src/main.py`  
+(linux) `./run.sh`  
 
+## Testing
+You need to install `pytest` package to perform testing!  
+Run `pytest` in the project's root directory.
+
+
+# Implementation Details
+## Project Structure
+```
+.
+├── src/
+│   ├── cli.py
+│   ├── database.py
+│   └── shop_service.py
+├── test/
+│   └── test_shop_service.py
+├── cloudshop.db
+├── pyproject.toml
+├── README.md
+└── run.sh
+```
+
+`database.py`: provides database to the API service, cache for top categories is also implemented here.  
+`shop_service.py`: API service.  
+`cli.py`: CLI interface that utilizes the API service.  
+`cloudshop.db`: generated after running the app for the first time, the app will keep using the same database file unless you delete it manually.
 
 ## Database Schema
+using Python's `sqlite3` module.
+
 ``` sql
-CREATE TABLE users (
+TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL
 );
-CREATE TABLE categories (
+TABLE categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL,
     listing_count INTEGER DEFAULT 0
 );
-CREATE TABLE listings (
+TABLE listings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     price REAL NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    user_id INTEGER NOT NULL,
-    category_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
+    username TEXT NOT NULL,
+    category TEXT NOT NULL,
+    FOREIGN KEY (username) REFERENCES users (name) ON DELETE CASCADE,
+    FOREIGN KEY (category) REFERENCES categories (name) ON DELETE CASCADE
 );
 ```
 

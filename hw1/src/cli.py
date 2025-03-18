@@ -3,18 +3,19 @@ import re
 from database import Database
 from shop_service import ShopServiceAPI
 
-DATABASE_FILEPATH = "cloudshop.db" 
+DATABASE_FILEPATH = "cloudshop.db"
+
 
 def main():
     db = Database("cloudshop.db")
     shop = ShopServiceAPI(db)
-    
+
     while True:
         try:
             command = input("# ").strip()
             if not command:
                 continue
-            
+
             args = parse_input(command)
             action = args[0].upper()
 
@@ -46,13 +47,14 @@ def main():
         except (IndexError, ValueError):
             print("Error - invalid input")
 
+
 def parse_input(input: str):
-    pattern = r"'(.*?)'|\S+"    
+    pattern = r"'(.*?)'|\S+"
     long_words = re.findall(pattern, input)
-    
+
     for lw in long_words:
         if lw:
-            input = input.replace(f"'{lw}'", '')
+            input = input.replace(f"'{lw}'", "")
     short_words = input.split()
 
     parsed = []
@@ -61,7 +63,7 @@ def parse_input(input: str):
             parsed.append(lw)
         else:
             parsed.append(short_words.pop(0))
-    
+
     return parsed
 
 
