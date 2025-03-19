@@ -3,19 +3,19 @@
 Python >= 3.13
 
 ## Run
-Run the following command in the project's root directory:  
+Run the following command in the homework's root directory `./hw1/`:  
 (windows) `python src/main.py`  
 (linux) `./run.sh`  
 
 ## Testing
 You need to install `pytest` package to perform testing!  
-Run `pytest` in the project's root directory.
+Run `pytest` in the homework's root directory `./hw1/`.
 
 
 # Implementation Details
 ## Project Structure
 ```
-.
+hw1/
 ├── src/
 │   ├── cli.py
 │   ├── database.py
