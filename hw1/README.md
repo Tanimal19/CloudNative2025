@@ -1,4 +1,6 @@
 # How to use
+Please clone this repo (or download the `.zip`), and `cd` into `hw1` directory.
+
 ## Environment
 Python >= 3.13
 
