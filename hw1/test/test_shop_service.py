@@ -134,6 +134,8 @@ def test_get_top_category_multiple(api):
     # Randomly delete listings
     for _ in range(NUM_LISTINGS // 5):
         user = random.choice(users)
+        if listings_per_user[user] == []:
+            continue
         listing_id = listings_per_user[user].pop()
 
         category = api.get_listing(user, listing_id).split("|")[4]
