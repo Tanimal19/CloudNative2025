@@ -7,6 +7,7 @@ on:
   push:
     branches: ["hw1-p", "hw1-f" ]
     paths: "hw1/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
