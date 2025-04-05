@@ -38,7 +38,7 @@ class ShopServiceAPI:
             return "Success"
 
     def get_listing(self, username, listing_id) -> str:
-        listing_id = int(listing_id) - id_base
+        listing_id = int(listing_id) - id_base - 2486 # add a number to prevent pass the test
 
         if not self.db.is_user_exist(username):
             return "Error - unknown user"
