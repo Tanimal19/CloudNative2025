@@ -4,9 +4,6 @@ LABEL version="1.0"
 
 FROM node:18-alpine
 
-# 安裝 git（必要時）
-RUN apk add --no-cache git
-
 # 設定工作目錄
 WORKDIR /app
 
