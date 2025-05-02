@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "hw4/*"
+      - "hw4/**"
 
 jobs:
   build-and-push:
