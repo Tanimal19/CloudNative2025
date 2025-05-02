@@ -19,19 +19,18 @@ jobs:
       - name: Detect changed folders with Dockerfile
         id: set-folders
         run: |
-          # 找出所有存在的 hw4/*/Dockerfile（從 push 的檔案中）
           folders=$(find hw4 -type f -name Dockerfile | awk -F/ '{print $2}' | sort -u)
-
-          # 轉成 JSON array 格式
           json=$(printf '%s\n' $folders | jq -R . | jq -s .)
-          echo "Changed folders: $json"
+
+          echo "Detected changed folders: $json"
 
           if [ "$json" == "[]" ]; then
-            echo "::error::No Dockerfiles found in pushed folders"
+            echo "::error::No Dockerfiles found"
             exit 1
           fi
 
-          echo "folders=$json" >> $GITHUB_OUTPUT
+          sanitized=$(echo "$json" | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g')
+          echo "folders=$sanitized" >> $GITHUB_OUTPUT
 
   build-and-push:
     needs: detect-and-build
