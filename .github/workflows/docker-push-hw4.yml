@@ -1,6 +1,7 @@
 name: Auto Build and Push Docker Images
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'hw4/nextjs/**'     # 當 nextjs 資料夾下有變動時觸發
