@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'hw4/nextjs/**'     # 當 nextjs 資料夾下有變動時觸發
-      - 'hw4/mitmproxy/**'   # 當 mitmproxy 資料夾下有變動時觸發
+      - 'hw4/nextjs/**'
+      - 'hw4/mitmproxy/**'
 
 jobs:
   build-and-push:
@@ -23,12 +23,11 @@ jobs:
         # 讀取 Dockerfile 中的 version
         file=hw4/${{ matrix.folder }}/Dockerfile
         version=$(grep -E '^(LABEL) +version *=*' "$file" | head -n1 | sed -E 's/.*[ =]+"?([0-9]+\.[0-9]+(\.[0-9]+)?)"?/\1/')
-
         if [ -z "$version" ]; then
           echo "::error::Failed to extract version from $file. Please add LABEL version=\"1.0\""
           exit 1
         fi
-        
+        echo "tag=${{ matrix.folder }}-$version"
         echo "tag=${{ matrix.folder }}-$version" >> $GITHUB_OUTPUT
 
     - name: Log in to Docker Hub
