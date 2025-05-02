@@ -35,5 +35,4 @@ jobs:
       with:
         context: ./hw4/${{ matrix.folder }}
         push: true
-        tags: |
-          tanimal19/2025cloud:${{ steps.version.outputs.tag }}
+        tags: tanimal19/2025cloud:${{ steps.version.outputs.tag }}
