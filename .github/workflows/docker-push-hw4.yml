@@ -7,29 +7,11 @@ on:
       - "hw4/*"
 
 jobs:
-  detect-changed:
-    runs-on: ubuntu-latest
-    outputs:
-      folders: ${{ steps.set-folders.outputs.folders }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Detect changed folders with Dockerfile
-        id: set-folders
-        run: |
-          folders=$(find hw4 -type f -name Dockerfile | awk -F/ '{print "\"" $2 "\"" }' | sort -u | paste -sd "," -)
-          echo "Detected folders: $folders"
-          echo "folders=$folders" >> $GITHUB_OUTPUT
-
   build-and-push:
-    needs: detect-changed
-    if: needs.detect-changed.outputs.folders != '[]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        folder: ${{ fromJson(needs.detect-changed.outputs.folders) }}
+        folder: ["mitmproxy", "nextjs"]
 
     steps:
       - name: Checkout code
