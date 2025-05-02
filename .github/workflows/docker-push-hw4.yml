@@ -19,13 +19,9 @@ jobs:
       - name: Detect changed folders with Dockerfile
         id: set-folders
         run: |
-          folders=$(find hw4 -type f -name Dockerfile | awk -F/ '{print $2}' | sort -u)
-          json=$(printf '%s\n' $folders | jq -R . | jq -s .)
-
-          echo "Detected folders: $json"
-
-          sanitized=$(echo "$json" | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g')
-          echo "folders=$sanitized" >> $GITHUB_OUTPUT
+          folders=$(find hw4 -type f -name Dockerfile | awk -F/ '{print "\"" $2 "\"" }' | sort -u | paste -sd "," -)
+          echo "Detected folders: $folders"
+          echo "folders=$folders" >> $GITHUB_OUTPUT
 
   build-and-push:
     needs: detect-changed
