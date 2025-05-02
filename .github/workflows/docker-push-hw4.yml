@@ -4,35 +4,45 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "hw4/**"
+      - "hw4/**/Dockerfile"
 
 jobs:
-  detect-changed-folders:
+  detect-and-build:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.set-matrix.outputs.changed }}
+      folders: ${{ steps.set-folders.outputs.folders }}
+
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Get changed folders under hw4/
-        id: set-matrix
+      - name: Detect changed folders with Dockerfile
+        id: set-folders
         run: |
-          changed=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^hw4/' | awk -F/ '{print $2}' | sort -u)
-          folders=$(printf '%s\n' $changed | jq -R . | jq -s .)
-          echo "Changed folders: $folders"
-          echo "changed=$folders" >> $GITHUB_OUTPUT
+          # 找出所有存在的 hw4/*/Dockerfile（從 push 的檔案中）
+          folders=$(find hw4 -type f -name Dockerfile | awk -F/ '{print $2}' | sort -u)
+
+          # 轉成 JSON array 格式
+          json=$(printf '%s\n' $folders | jq -R . | jq -s .)
+          echo "Changed folders: $json"
+
+          if [ "$json" == "[]" ]; then
+            echo "::error::No Dockerfiles found in pushed folders"
+            exit 1
+          fi
+
+          echo "folders=$json" >> $GITHUB_OUTPUT
 
   build-and-push:
-    needs: detect-changed-folders
+    needs: detect-and-build
+    if: needs.detect-and-build.outputs.folders != '[]'
     runs-on: ubuntu-latest
-    if: needs.detect-changed-folders.outputs.changed != '[]'
     strategy:
       matrix:
-        folder: ${{ fromJson(needs.detect-changed-folders.outputs.changed) }}
+        folder: ${{ fromJson(needs.detect-and-build.outputs.folders) }}
 
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Read version from Dockerfile
@@ -40,10 +50,6 @@ jobs:
         run: |
           file=hw4/${{ matrix.folder }}/Dockerfile
           version=$(grep -iE 'label +version *= *"?[0-9]+\.[0-9]+(\.[0-9]+)?"?' "$file" | sed -E 's/.*version *= *"?([0-9]+\.[0-9]+(\.[0-9]+)?)"?/\1/')
-          if [ -z "$version" ]; then
-            echo "::error::Missing or invalid LABEL version in $file"
-            exit 1
-          fi
           echo "tag=${{ matrix.folder }}-$version" >> $GITHUB_OUTPUT
 
       - name: Log in to Docker Hub
